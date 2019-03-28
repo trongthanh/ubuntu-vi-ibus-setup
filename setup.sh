@@ -18,20 +18,38 @@ function echo...() {
 
 # Install ibus-unikey
 function install_ibus_unikey() {
-
+	echo... "Bắt đầu cài đặt ibus-unikey"
 	sudo apt install ibus ibus-unikey
 }
 
 # Install ibus-teni
 function install_ibus_teni() {
 
-	echo "To install ibus-teni"
+	local ppa=teni-ime/ibus-teni
+
+	if ! grep -q "^deb .*$ppa" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
+		echo "Thêm nguồn cài đặt ibus-teni tại ppa:teni-ime/ibus-teni"
+		sudo add-apt-repository ppa:$ppa
+		sudo apt-get update
+	fi
+
+	echo... "Bắt đầu cài đặt ibus-teni"
+	sudo apt-get install ibus ibus-teni
 }
 
 # Install ibus-teni
 function install_ibus_bamboo() {
 
-	echo "To install ibus-bamboo"
+	local ppa=bamboo-engine/ibus-bamboo
+
+	if ! grep -q "^deb .*$ppa" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
+		echo "Thêm nguồn cài đặt ibus-bamboo tại ppa:teni-ime/ibus-teni"
+		sudo add-apt-repository ppa:$ppa
+		sudo apt-get update
+	fi
+
+	echo... "Bắt đầu cài đặt ibus-bamboo"
+	sudo apt-get install ibus ibus-bamboo
 }
 
 
@@ -56,10 +74,12 @@ done
 echo... "Bạn chọn $ime"
 echo
 
-read -p "Tôi phát hiện ra bạn có cài unikey/teni/bamboo"
+read -p "Tôi phát hiện ra bạn có cài fcitx"
 read -p "Tôi sẽ gỡ bõ bộ gõ này trước để tránh xung đột"
+echo
 
-echo... "Bắt đầu cài đặt"
+sudo apt purge fcitx*
+
 echo
 
 case $ime in
@@ -75,7 +95,30 @@ case $ime in
 esac
 
 echo
-read -p "Tiếp theo tôi sẽ kích hoạt cửa sổ im-config để chuyển bộ gõ mặc định về iBus"
-read -p "Bạn hãy chọn OK|YES hai lần sau đó click chọn vào tùy chọn ibus"
+echo... "Chạy lệnh 'im-config -n ibus' để chuyển bộ gõ mặc định về iBus"
+im-config -n ibus
 
-im-config
+echo
+echo... "Khởi động iBus nếu chưa chạy"
+echo
+ibus restart
+echo
+echo... "Bật giao diện cấu hình iBus."
+echo
+case $ime in
+	ibus-unikey)
+		echo... "Bạn hãy thêm Vietnamese > Unikey tại tab Input Method / Phương thức nhập"
+		;;
+	ibus-teni)
+		echo... "Bạn hãy thêm Vietnamese > Teni tại tab Input Method / Phương thức nhập"
+		;;
+	ibus-bamboo)
+		echo... "Bạn hãy thêm Vietnamese > Bamboo tại tab Input Method / Phương thức nhập"
+		;;
+esac
+
+ibus-setup
+
+echo
+echo
+echo "Cài đặt hoàn tất."
