@@ -28,7 +28,8 @@ function install_ibus_teni() {
 	local ppa=teni-ime/ibus-teni
 
 	if ! grep -q "^deb .*$ppa" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
-		echo "Thêm nguồn cài đặt ibus-teni tại ppa:teni-ime/ibus-teni"
+		echo... "Thêm nguồn cài đặt ibus-teni tại ppa:teni-ime/ibus-teni"
+		echo
 		sudo add-apt-repository ppa:$ppa
 		sudo apt-get update
 	fi
@@ -43,7 +44,8 @@ function install_ibus_bamboo() {
 	local ppa=bamboo-engine/ibus-bamboo
 
 	if ! grep -q "^deb .*$ppa" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
-		echo "Thêm nguồn cài đặt ibus-bamboo tại ppa:teni-ime/ibus-teni"
+		echo... "Thêm nguồn cài đặt ibus-bamboo tại ppa:teni-ime/ibus-teni"
+		echo
 		sudo add-apt-repository ppa:$ppa
 		sudo apt-get update
 	fi
@@ -52,6 +54,22 @@ function install_ibus_bamboo() {
 	sudo apt-get install ibus ibus-bamboo
 }
 
+function check_for_conflict_software() {
+	conflict_software_list=(fcitx)
+	echo... "Kiểm tra phần mềm xung đột"
+
+	for software in ${conflict_software_list[@]}; do
+		dpkg -l | grep -i $software | head -1 | if [[ "$(cut -d ' ' -f 1)" == "ii" ]]; then
+			echo
+			echo... "Tôi phát hiện ra bạn có cài $software"
+			echo
+			echo... "Tôi sẽ gỡ bõ bộ gõ này trước để tránh xung đột"
+			sudo apt purge $software*
+		else
+			echo "Không phát hiện ra ứng dụng hỗ trợ gõ dấu tiếng Việt khác."
+		fi
+	done
+}
 
 # Main program start:
 
@@ -74,11 +92,7 @@ done
 echo... "Bạn chọn $ime"
 echo
 
-read -p "Tôi phát hiện ra bạn có cài fcitx"
-read -p "Tôi sẽ gỡ bõ bộ gõ này trước để tránh xung đột"
-echo
-
-sudo apt purge fcitx*
+check_for_conflict_software
 
 echo
 
@@ -105,6 +119,7 @@ ibus restart
 echo
 echo... "Bật giao diện cấu hình iBus."
 echo
+
 case $ime in
 	ibus-unikey)
 		echo... "Bạn hãy thêm Vietnamese > Unikey tại tab Input Method / Phương thức nhập"
