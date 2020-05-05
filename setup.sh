@@ -28,7 +28,7 @@ function install_ibus_teni() {
 	local ppa=teni-ime/ibus-teni
 
 	if ! grep -q "^deb .*$ppa" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
-		echo... "Thêm nguồn cài đặt ibus-teni tại ppa:teni-ime/ibus-teni"
+		echo... "Thêm nguồn cài đặt ibus-teni tại ppa:$ppa"
 		echo
 		sudo add-apt-repository ppa:$ppa
 		sudo apt-get update
@@ -38,13 +38,13 @@ function install_ibus_teni() {
 	sudo apt-get install ibus ibus-teni
 }
 
-# Install ibus-teni
+# Install ibus-bamboo
 function install_ibus_bamboo() {
 
 	local ppa=bamboo-engine/ibus-bamboo
 
 	if ! grep -q "^deb .*$ppa" /etc/apt/sources.list /etc/apt/sources.list.d/*; then
-		echo... "Thêm nguồn cài đặt ibus-bamboo tại ppa:teni-ime/ibus-teni"
+		echo... "Thêm nguồn cài đặt ibus-bamboo tại ppa:$ppa"
 		echo
 		sudo add-apt-repository ppa:$ppa
 		sudo apt-get update
